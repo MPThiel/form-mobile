@@ -1,0 +1,101 @@
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Editors
+.idea/
+.vscode/
+*.iml
+
+# Claude Code local settings (auto-generated per machine)
+.claude/settings.local.json
+.claude/
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ============================================================================
+# Backend (server/)
+# ============================================================================
+server/node_modules/
+server/dist/
+server/coverage/
+server/.turbo/
+server/prisma/migrations/**/migration_lock.toml.bak
+# Prisma generated client
+server/src/generated/
+
+# ============================================================================
+# Flutter (app/)
+# ============================================================================
+# Build outputs
+app/build/
+app/.dart_tool/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+app/.packages
+app/.pub-cache/
+app/.pub/
+app/.fvm/
+
+# Generated files
+app/**/*.g.dart
+app/**/*.freezed.dart
+app/**/*.gr.dart
+app/**/*.config.dart
+
+# iOS
+app/ios/Pods/
+app/ios/.symlinks/
+app/ios/Flutter/Flutter.framework
+app/ios/Flutter/Flutter.podspec
+app/ios/Flutter/Generated.xcconfig
+app/ios/Flutter/flutter_export_environment.sh
+app/ios/Flutter/flutter_assets/
+app/ios/Flutter/App.framework
+app/ios/Runner/GeneratedPluginRegistrant.*
+app/ios/.generated/
+app/ios/ServiceDefinitions.json
+app/ios/Runner.xcworkspace/xcuserdata/
+app/ios/Runner.xcodeproj/xcuserdata/
+app/ios/Runner.xcodeproj/project.xcworkspace/xcuserdata/
+
+# Android
+app/android/.gradle/
+app/android/captures/
+app/android/gradlew
+app/android/gradlew.bat
+app/android/local.properties
+app/android/**/GeneratedPluginRegistrant.java
+app/android/key.properties
+app/android/app/release/
+app/android/app/debug/
+app/android/app/profile/
+app/android/.kotlin/
+
+# Linux / macOS / Windows desktop targets — not used in v1
+app/linux/
+app/macos/
+app/windows/
+app/web/
+
+# Coverage
+app/coverage/
+
+# Symbols
+app/**/*.symbols
+
+# Secrets used by tooling — never commit
+app/android/app/upload-keystore.jks
+app/android/app/*.jks
