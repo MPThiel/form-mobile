@@ -1,0 +1,141 @@
+// FORM Mobile — Prisma schema.
+// Source of truth: FORM-mobile-build-spec.md section 4.
+// Notes:
+//  - Streak is derived from DailyLog rows, not stored.
+//  - (source, externalId) on Run/Workout prevents duplicate Strava imports.
+//  - Strava tokens are encrypted at rest (STRAVA_TOKEN_ENCRYPTION_KEY).
+//  - subscriptionTier on User is scaffolded now per spec section 12.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                     String            @id @default(cuid())
+  email                  String            @unique
+  authProvider           String // "apple" | "google" | "email"
+  subscriptionTier       String            @default("free") // "free" | "paid"
+  subscriptionExpiresAt  DateTime?
+  createdAt              DateTime          @default(now())
+  profile                Profile?
+  logs                   DailyLog[]
+  stravaConnection       StravaConnection?
+  weekPlans              WeekPlan[]
+  chatMessages           ChatMessage[]
+}
+
+model Profile {
+  userId             String   @id
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentWeight      Float
+  targetWeight       Float
+  age                Int
+  trainingHistory    String // "beginner" | "some_exp" | "consistent" | "comeback" | "desire_only"
+  goals              Json // [{ id, rank }]
+  mood               Int // 1-5
+  energy             Int // 1-5
+  physicalNotes      String?
+  nutritionStyle     String // "none" | "high_protein" | "low_carb" | "balanced_macros" | "calorie_counting" | "need_guidance"
+  dailyCalorieTarget Int
+  weeklyRunKmTarget  Float
+  weeklyWorkoutDays  Int
+  setupDate          DateTime
+}
+
+model DailyLog {
+  id       String    @id @default(cuid())
+  userId   String
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date     DateTime  @db.Date
+  weight   Float?
+  meals    Meal[]
+  runs     Run[]
+  workouts Workout[]
+
+  @@unique([userId, date])
+  @@index([userId, date])
+}
+
+model Meal {
+  id         String   @id @default(cuid())
+  dailyLogId String
+  log        DailyLog @relation(fields: [dailyLogId], references: [id], onDelete: Cascade)
+  name       String
+  calories   Int
+  protein    Int
+  carbs      Int
+  fat        Int
+  photoUrl   String?
+  timestamp  DateTime
+
+  @@index([dailyLogId])
+}
+
+model Run {
+  id           String   @id @default(cuid())
+  dailyLogId   String
+  log          DailyLog @relation(fields: [dailyLogId], references: [id], onDelete: Cascade)
+  distanceKm   Float
+  durationSec  Int
+  paceSecPerKm Int
+  source       String // "manual" | "strava" | "healthkit" | "healthconnect"
+  externalId   String?
+  timestamp    DateTime
+
+  @@unique([source, externalId])
+  @@index([dailyLogId])
+}
+
+model Workout {
+  id          String   @id @default(cuid())
+  dailyLogId  String
+  log         DailyLog @relation(fields: [dailyLogId], references: [id], onDelete: Cascade)
+  type        String
+  durationMin Int
+  difficulty  Int // 1-10
+  notes       String?
+  source      String
+  externalId  String?
+  timestamp   DateTime
+
+  @@unique([source, externalId])
+  @@index([dailyLogId])
+}
+
+model StravaConnection {
+  userId       String   @id
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  athleteId    BigInt   @unique
+  accessToken  String // encrypted at rest
+  refreshToken String // encrypted at rest
+  expiresAt    DateTime
+  connectedAt  DateTime @default(now())
+}
+
+model WeekPlan {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  weekStart  DateTime @db.Date
+  approved   Boolean  @default(false)
+  proposedAt DateTime @default(now())
+  days       Json // { "YYYY-MM-DD": { type, label, targetKm?, targetMin? } }
+
+  @@unique([userId, weekStart])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String // "user" | "assistant"
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
