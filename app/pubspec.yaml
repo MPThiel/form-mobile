@@ -1,0 +1,91 @@
+name: form
+description: "FORM — adaptive AI fitness companion"
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.12.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # State management — Riverpod 2.x with code generation
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+
+  # Navigation
+  go_router: ^14.2.7
+
+  # HTTP — Dio with auth interceptor (added in Phase 1)
+  dio: ^5.7.0
+
+  # Local cache (SQLite via Drift) — used heavily from Phase 3
+  drift: ^2.20.3
+  sqlite3_flutter_libs: ^0.5.24
+  path_provider: ^2.1.4
+  path: ^1.9.0
+
+  # Secure storage for JWTs / refresh tokens
+  flutter_secure_storage: ^9.2.2
+
+  # HealthKit + Health Connect — Phase 8
+  health: ^11.1.1
+
+  # Charts — Phase 9
+  fl_chart: ^0.69.0
+
+  # Typography — Montserrat + Space Grotesk via Google Fonts
+  google_fonts: ^6.2.1
+
+  # Camera / gallery for meal photos — Phase 4
+  image_picker: ^1.1.2
+  camera: ^0.11.0+2
+  flutter_image_compress: ^2.3.0
+
+  # OAuth flow for Strava — Phase 7
+  flutter_web_auth_2: ^4.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+  # Riverpod / Freezed code generation (added when first generated file lands)
+  build_runner: ^2.4.13
+  riverpod_generator: ^2.4.3
+  custom_lint: ^0.7.6
+  riverpod_lint: ^2.6.5
+
+  # Launcher icons + native splash — Phase 0 placeholder, Phase 11 polish
+  flutter_launcher_icons: ^0.14.1
+  flutter_native_splash: ^2.4.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/branding/
+
+# ---- flutter_launcher_icons -------------------------------------------------
+# Placeholder icon: solid #131313 background, orange "F" glyph.
+# Regenerate with: dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "assets/branding/icon_master.png"
+  adaptive_icon_background: "#131313"
+  adaptive_icon_foreground: "assets/branding/icon_foreground.png"
+  remove_alpha_ios: true
+
+# ---- flutter_native_splash --------------------------------------------------
+# Placeholder splash: #131313 background, orange "F" glyph centred.
+# Regenerate with: dart run flutter_native_splash:create
+flutter_native_splash:
+  color: "#131313"
+  image: "assets/branding/splash_logo.png"
+  android_12:
+    color: "#131313"
+    image: "assets/branding/splash_logo.png"
+  ios: true
+  android: true
