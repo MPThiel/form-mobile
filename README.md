@@ -28,14 +28,42 @@ npm run prisma:migrate        # requires DATABASE_URL pointing at a local Postgr
 npm run dev                   # http://localhost:3000
 ```
 
-`GET /health` returns `{ "status": "ok" }`.
+`GET /health` returns `{ "status": "ok" }`. The authenticated routes (`/me`)
+additionally need `SUPABASE_PROJECT_URL` set in `.env` so JWTs can be verified
+against the project's JWKS — see [server/.env.example](server/.env.example).
 
 ### Flutter app
+
+Supabase credentials and the backend URL are passed at build time via
+`--dart-define` (never hardcoded, never committed):
 
 ```sh
 cd app
 flutter pub get
-flutter run                   # picks the connected device / simulator
+flutter run \
+  --dart-define=SUPABASE_URL=https://<project-ref>.supabase.co \
+  --dart-define=SUPABASE_PUBLISHABLE_KEY=sb_publishable_xxx \
+  --dart-define=BACKEND_BASE_URL=http://10.0.2.2:3000
+```
+
+- `SUPABASE_PUBLISHABLE_KEY` is the project's publishable (anon) key — safe to
+  ship in the client. Found in Supabase → Project Settings → API.
+- `BACKEND_BASE_URL` defaults to `http://10.0.2.2:3000`. On the **Android
+  emulator**, `10.0.2.2` is the loopback alias that reaches the host machine's
+  `localhost`, so it hits the backend from `npm run dev`. (iOS simulator can use
+  `http://localhost:3000`; a physical device needs your machine's LAN IP.)
+
+Launched without the two Supabase defines, the app shows a configuration screen
+instead of crashing.
+
+#### Magic-link sign-in setup
+
+The magic-link email reopens the app via the custom scheme **`form://login-callback`**
+(registered as an Android intent filter). Whitelist it in
+Supabase → Authentication → URL Configuration → **Redirect URLs**:
+
+```
+form://login-callback
 ```
 
 ## Deploy

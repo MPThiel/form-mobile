@@ -27,6 +27,10 @@ dependencies:
   path_provider: ^2.1.4
   path: ^1.9.0
 
+  # Auth — Supabase (magic link, JWT issuance). Session verified server-side
+  # via JWKS; the client never talks to third-party secret-bearing APIs.
+  supabase_flutter: ^2.8.0
+
   # Secure storage for JWTs / refresh tokens
   flutter_secure_storage: ^9.2.2
 
