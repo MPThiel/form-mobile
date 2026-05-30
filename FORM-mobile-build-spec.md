@@ -38,7 +38,7 @@ The product idea, data model, and coaching behaviour stay the same. The architec
 - **Node.js + Fastify + TypeScript** (recommended — translates cleanly to Supabase Edge Functions later)
 - **Prisma** + **PostgreSQL** (Prisma schema mirrors directly into Supabase)
 - **Supabase Auth** from day one, even on own backend — it works standalone via JWT verification and is the one piece that needs zero rework at migration
-- Hosted on **Fly.io** or **Render** (both have free tiers, easy Postgres add-on)
+- Hosted on **Railway** (same account already in use for Scholar's Quest, $5/mo Hobby plan with $5 of included credits, Git-push deploys, automatic Postgres provisioning)
 
 If you'd rather use Python: FastAPI + SQLAlchemy is equivalent. Flag preference before phase 1 starts.
 
@@ -241,7 +241,7 @@ Strava allows 1,000 daily auth requests for unverified apps — fine for beta. A
 6. Backend immediately fetches the last 30 days of activities and inserts as `Run` / `Workout` records.
 
 ### Activity Sync (push, not poll)
-- Subscribe to Strava's **webhook events** at `POST /strava/webhook` on your backend (requires public HTTPS).
+- Subscribe to Strava's **webhook events** at `POST /strava/webhook` on your backend (requires public HTTPS — Railway gives this for free with a `*.up.railway.app` domain).
 - On every webhook (`object_type: activity, aspect_type: create|update|delete`), fetch the activity and upsert into the matching `Run` or `Workout` row using `(source, externalId)`.
 - Polling fallback runs every 6 hours via a cron job, in case webhooks are missed.
 
@@ -382,7 +382,7 @@ No fixed timeline. Each phase ships a working app build to TestFlight + Play Int
 - [ ] Google Play Console account ($25 one-time)
 - [ ] Strava API application
 - [ ] Cloudflare R2 account
-- [ ] Fly.io or Render account
+- [ ] Railway project (already have account — just add a new project for FORM)
 - [ ] Supabase project (Auth-only initially)
 
 ### Legal / Required Documents

@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1
-# Multi-stage Dockerfile for FORM server. Built for Fly.io, runs on any Docker host.
+# Multi-stage Dockerfile for FORM server. Built for Railway, runs on any Docker host.
 
 ARG NODE_VERSION=20-alpine
 

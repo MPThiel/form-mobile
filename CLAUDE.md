@@ -41,9 +41,10 @@ The repo is split into two top-level packages:
 
 ### Backend
 - **Node.js 20+, Fastify, TypeScript**
-- **Prisma** ORM, **PostgreSQL** 15+
+- **Prisma** ORM, **PostgreSQL** 15+ (Railway-provisioned)
 - **Supabase Auth** for JWT issuance (verified via JWKS, not Supabase SDK)
 - **Cloudflare R2** for meal photo storage
+- **Railway** for deploy (same account as Scholar's Quest)
 
 ### What's banned
 - No direct calls from the Flutter client to the Anthropic API, Strava API, or any third-party service that requires secrets.

@@ -46,12 +46,26 @@ prisma/schema.prisma Data model — see spec section 4
 test/                Vitest suites
 ```
 
-## Deploy (Fly.io)
+## Deploy (Railway)
+
+The repo deploys from this `server/` subdirectory. In the Railway service settings set **Root Directory** to `server` so `railway.json` and the `Dockerfile` resolve correctly.
 
 ```sh
-fly launch --no-deploy        # if app doesn't exist yet
-fly secrets set DATABASE_URL=... SUPABASE_PROJECT_URL=... ANTHROPIC_API_KEY=... ...
-fly deploy
+# One-time, from server/:
+railway login
+railway link                  # link to the FORM project (create it in the dashboard first)
+
+# Add a Postgres plugin in the dashboard — it injects DATABASE_URL automatically.
+# Set the remaining secrets (never commit these):
+railway variables set \
+  SUPABASE_PROJECT_URL=... \
+  SUPABASE_AUDIENCE=authenticated \
+  ANTHROPIC_API_KEY=... \
+  STRAVA_CLIENT_ID=... STRAVA_CLIENT_SECRET=...
+
+railway up                    # build + deploy via the Dockerfile
 ```
+
+`railway.json` pins the Dockerfile builder, the `node dist/index.js` start command, and a `/health` healthcheck. Railway gives the service a public `*.up.railway.app` HTTPS domain (used later for the Strava webhook).
 
 The Dockerfile is multi-stage: deps → build (Prisma generate + `tsc`) → minimal runtime image as non-root.

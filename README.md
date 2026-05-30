@@ -38,6 +38,10 @@ flutter pub get
 flutter run                   # picks the connected device / simulator
 ```
 
+## Deploy
+
+The backend deploys to **Railway** (Git-push deploys, automatic Postgres provisioning, free `*.up.railway.app` HTTPS domain). The Railway service's **Root Directory** is set to `server`, so it picks up [server/railway.json](server/railway.json) and the multi-stage [server/Dockerfile](server/Dockerfile). See [server/README.md](server/README.md#deploy-railway) for the deploy steps and required secrets.
+
 ## CI
 
 - [.github/workflows/app.yml](.github/workflows/app.yml) — `flutter analyze`, `flutter test`, iOS build (no signing), Android APK build.
