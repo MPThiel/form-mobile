@@ -60,11 +60,17 @@ railway link                  # link to the FORM project (create it in the dashb
 railway variables set \
   SUPABASE_PROJECT_URL=... \
   SUPABASE_AUDIENCE=authenticated \
+  SUPABASE_SERVICE_ROLE_KEY=... \
   ANTHROPIC_API_KEY=... \
   STRAVA_CLIENT_ID=... STRAVA_CLIENT_SECRET=...
 
 railway up                    # build + deploy via the Dockerfile
 ```
+
+> **Required before deploying:** `SUPABASE_SERVICE_ROLE_KEY` must be set in the
+> Railway service variables. It is the `service_role` (secret) key from
+> Supabase → Project Settings → API, used server-side to send magic-link emails
+> via `POST /auth/magic-link`. Without it, sign-in returns a 500.
 
 `railway.json` pins the Dockerfile builder, the `node dist/index.js` start command, and a `/health` healthcheck. Railway gives the service a public `*.up.railway.app` HTTPS domain (used later for the Strava webhook).
 

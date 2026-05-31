@@ -29,8 +29,9 @@ npm run dev                   # http://localhost:3000
 ```
 
 `GET /health` returns `{ "status": "ok" }`. The authenticated routes (`/me`)
-additionally need `SUPABASE_PROJECT_URL` set in `.env` so JWTs can be verified
-against the project's JWKS — see [server/.env.example](server/.env.example).
+need `SUPABASE_PROJECT_URL` set in `.env` so JWTs can be verified against the
+project's JWKS, and `POST /auth/magic-link` (which sends the sign-in email)
+needs `SUPABASE_SERVICE_ROLE_KEY` — see [server/.env.example](server/.env.example).
 
 ### Flutter app
 
@@ -69,6 +70,8 @@ form://login-callback
 ## Deploy
 
 The backend deploys to **Railway** (Git-push deploys, automatic Postgres provisioning, free `*.up.railway.app` HTTPS domain). The Railway service's **Root Directory** is set to `server`, so it picks up [server/railway.json](server/railway.json) and the multi-stage [server/Dockerfile](server/Dockerfile). See [server/README.md](server/README.md#deploy-railway) for the deploy steps and required secrets.
+
+Before deploying, add **`SUPABASE_SERVICE_ROLE_KEY`** to the Railway service variables (Supabase → Project Settings → API → `service_role` secret). The backend uses it to send magic-link emails via `POST /auth/magic-link`; sign-in fails without it.
 
 ## CI
 

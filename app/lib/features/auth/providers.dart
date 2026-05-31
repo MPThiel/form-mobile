@@ -1,8 +1,9 @@
+import 'package:dio/dio.dart' show DioException;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show AuthException;
 
 import '../../core/auth/supabase_service.dart';
 import '../../core/storage/local_cache.dart';
+import 'data/auth_repository.dart';
 
 /// UI state for the magic-link sign-in flow.
 sealed class AuthFlowState {
@@ -42,15 +43,29 @@ class AuthController extends Notifier<AuthFlowState> {
     final trimmed = email.trim();
     state = const AuthSendingLink();
     try {
-      await ref.read(supabaseServiceProvider).sendMagicLink(trimmed);
+      // Proxied through our backend (see AuthRepository) rather than calling
+      // Supabase directly, so the send works on networks that can't resolve
+      // the Supabase domain.
+      await ref.read(authRepositoryProvider).sendMagicLink(trimmed);
       state = AuthLinkSent(trimmed);
-    } on AuthException catch (e) {
-      state = AuthFailure(e.message);
+    } on DioException catch (e) {
+      state = AuthFailure(_messageFor(e));
     } catch (_) {
       state = const AuthFailure(
         'Could not send the magic link. Check your connection and try again.',
       );
     }
+  }
+
+  String _messageFor(DioException e) {
+    if (e.response?.statusCode == 429) {
+      return 'Too many requests. Please wait a few minutes and try again.';
+    }
+    final data = e.response?.data;
+    if (data is Map && data['message'] is String) {
+      return data['message'] as String;
+    }
+    return 'Could not send the magic link. Check your connection and try again.';
   }
 
   /// Return to the email input from the confirmation / error state.

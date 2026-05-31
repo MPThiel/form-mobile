@@ -1,11 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../config/env.dart';
-
 /// Thin wrapper around the `supabase_flutter` client so the rest of the app
 /// never imports the SDK directly. Exposes only what FORM needs for Phase 1
-/// (magic-link sign-in, the current session, sign-out).
+/// (the current session, sign-out, and the auth-change stream that completes
+/// when the magic-link deep link is processed).
+///
+/// Note: sending the magic link is NOT done here — it is proxied through our
+/// backend (see AuthRepository) so it works on networks that can't resolve the
+/// Supabase domain. Only the callback/session handling stays client-side.
 class SupabaseService {
   SupabaseService(this._client);
 
@@ -20,16 +23,6 @@ class SupabaseService {
   /// Emits on every auth change (sign-in via magic link, token refresh,
   /// sign-out). Drives router redirects.
   Stream<AuthState> get onAuthStateChange => _client.auth.onAuthStateChange;
-
-  /// Sends a passwordless magic link. The email contains a link that reopens
-  /// the app via [Env.authRedirectUrl]; `supabase_flutter` then completes the
-  /// session from the deep link.
-  Future<void> sendMagicLink(String email) {
-    return _client.auth.signInWithOtp(
-      email: email,
-      emailRedirectTo: Env.authRedirectUrl,
-    );
-  }
 
   Future<void> signOut() => _client.auth.signOut();
 }

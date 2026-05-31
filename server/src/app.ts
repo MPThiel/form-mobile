@@ -5,6 +5,7 @@ import { authPlugin } from './plugins/auth.js';
 import { prismaPlugin } from './plugins/prisma.js';
 import { healthRoutes } from './routes/health.js';
 import { meRoutes } from './routes/me.js';
+import { authRoutes } from './routes/auth.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
   const app = Fastify({
@@ -38,6 +39,7 @@ export async function buildApp(): Promise<FastifyInstance> {
   await app.register(authPlugin);
 
   await app.register(healthRoutes);
+  await app.register(authRoutes);
   await app.register(meRoutes);
 
   return app;
